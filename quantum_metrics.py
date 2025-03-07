@@ -50,7 +50,7 @@ class QuantumInformationMetrics:
     def von_neumann_entropy(self):
         """
         Calculate the von Neumann entropy of the density matrix.
-        S(ρ) = -Tr(ρ ln ρ) = -∑ λᵢ ln λᵢ
+        S(\rho) = -Tr(\rho ln \rho) = -\sum \lambda_i ln \lambda_i
         
         Returns:
         --------
@@ -70,7 +70,7 @@ class QuantumInformationMetrics:
     def linear_entropy(self):
         """
         Calculate the linear entropy of the density matrix.
-        S_L = 1 - Tr(ρ²)
+        S_L = 1 - Tr(\rho²)
         
         The linear entropy is a measure of mixedness that is easier to compute
         than the von Neumann entropy and ranges from 0 (pure) to 1-1/d (completely mixed),
@@ -82,16 +82,16 @@ class QuantumInformationMetrics:
             Linear entropy value
         """
         if self.sim.use_pure_state:
-            # For a pure state, Tr(ρ²) = 1, so S_L = 0
+            # For a pure state, Tr(\rho²) = 1, so S_L = 0
             return 0.0
         else:
-            # For our equal mixture of N eigenstates, Tr(ρ²) = ∑ (1/N)² = 1/N
+            # For our equal mixture of N eigenstates, Tr(\rho²) = \sum (1/N)² = 1/N
             return 1.0 - 1.0/16.0
     
     def purity(self):
         """
         Calculate the purity of the density matrix.
-        γ = Tr(ρ²)
+        \gamma = Tr(\rho²)
         
         Purity ranges from 1/d to 1, where d is the dimension of the Hilbert space.
         A pure state has purity = 1, while a completely mixed state has purity = 1/d.
@@ -111,7 +111,7 @@ class QuantumInformationMetrics:
     def participation_ratio(self):
         """
         Calculate the participation ratio of the density matrix.
-        PR = 1/Tr(ρ²)
+        PR = 1/Tr(\rho²)
         
         The participation ratio gives an estimate of the "effective number of states"
         in the mixture. For a pure state, PR = 1, while for a completely mixed state
@@ -205,7 +205,7 @@ class QuantumInformationMetrics:
         plt.grid(True)
         plt.xlabel('Time')
         plt.ylabel('von Neumann Entropy')
-        plt.title('von Neumann Entropy S(ρ)')
+        plt.title('von Neumann Entropy S(\rho)')
         
         # Plot linear entropy
         plt.subplot(2, 2, 2)
@@ -221,7 +221,7 @@ class QuantumInformationMetrics:
         plt.grid(True)
         plt.xlabel('Time')
         plt.ylabel('Purity')
-        plt.title('Purity γ')
+        plt.title('Purity \gamma')
         
         # Plot participation ratio
         plt.subplot(2, 2, 4)
@@ -260,7 +260,7 @@ class QuantumInformationMetrics:
         plt.grid(True)
         plt.xlabel('Time')
         plt.ylabel('von Neumann Entropy')
-        plt.title('von Neumann Entropy S(ρ)')
+        plt.title('von Neumann Entropy S(\rho)')
         plt.legend()
         
         # Plot linear entropy
@@ -280,7 +280,7 @@ class QuantumInformationMetrics:
         plt.grid(True)
         plt.xlabel('Time')
         plt.ylabel('Purity')
-        plt.title('Purity γ')
+        plt.title('Purity \gamma')
         plt.legend()
         
         # Plot participation ratio
@@ -303,7 +303,7 @@ class QuantumInformationMetrics:
     def calculate_relative_entropy(self, rho_pure, rho_mixed):
         """
         Calculate the quantum relative entropy between two density matrices.
-        S(ρ||σ) = Tr[ρ(log ρ - log σ)]
+        S(\rho||\sigma) = Tr[\rho(log \rho - log \sigma)]
         
         Parameters:
         -----------
@@ -321,8 +321,8 @@ class QuantumInformationMetrics:
         # Pure state: one eigenvalue of 1, rest 0
         # Mixed state: 16 eigenvalues of 1/16, rest 0
         
-        # For pure state relative to mixed state, S(ρ||σ) = -S(ρ) - Tr[ρ log σ]
-        # Since pure state has S(ρ) = 0, and Tr[ρ log σ] = log(1/16) = -log(16)
+        # For pure state relative to mixed state, S(\rho||\sigma) = -S(\rho) - Tr[\rho log \sigma]
+        # Since pure state has S(\rho) = 0, and Tr[\rho log \sigma] = log(1/16) = -log(16)
         rel_entropy = np.log(16)
         
         return rel_entropy
