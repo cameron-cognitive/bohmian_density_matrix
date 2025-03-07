@@ -77,11 +77,11 @@ class DensityMatrixRelaxationAnalysis:
         
         if not np.isnan(pure_decay_rate):
             plt.plot(t, exp_decay(t, *self.pure_params), 'b-', 
-                    label=f'Pure State Fit: τ = {1/pure_decay_rate:.2f}')
+                    label=f'Pure State Fit: \tau = {1/pure_decay_rate:.2f}')
         
         if not np.isnan(mixed_decay_rate):
             plt.plot(t, exp_decay(t, *self.mixed_params), 'r-', 
-                    label=f'Mixed State Fit: τ = {1/mixed_decay_rate:.2f}')
+                    label=f'Mixed State Fit: \tau = {1/mixed_decay_rate:.2f}')
         
         plt.grid(True)
         plt.xlabel('Time')
@@ -148,7 +148,7 @@ class DensityMatrixRelaxationAnalysis:
         plt.plot(x_labels, mixed_h_values, 'ro-', label='Mixed State')
         
         plt.grid(True)
-        plt.xlabel('Coarse-graining scale (ε)')
+        plt.xlabel('Coarse-graining scale (\epsilon)')
         plt.ylabel('H-function')
         plt.title(f'Effect of Coarse-graining Scale on H-function at t={t:.2f}')
         plt.legend()
@@ -433,6 +433,17 @@ def main():
     # Analyze off-diagonal evolution
     print("\nAnalyzing off-diagonal element evolution...")
     analyzer.analyze_off_diagonal_evolution(sim_pure)
+    
+    # Create relaxation animation
+    print("\nCreating relaxation animations...")
+    analyzer.create_relaxation_animation(sim_pure, t_max=5.0, fps=10, epsilon=np.pi/20)
+    analyzer.create_relaxation_animation(sim_mixed, t_max=5.0, fps=10, epsilon=np.pi/20)
+    
+    # Compare different initial distributions
+    print("\nComparing different initial distributions...")
+    analyzer.compare_initial_distributions(
+        dist_types=['ground_state', 'uniform', 'custom']
+    )
 
 if __name__ == "__main__":
     main()
