@@ -433,6 +433,7 @@ def main():
     # Analyze off-diagonal evolution
     print("\nAnalyzing off-diagonal element evolution...")
     analyzer.analyze_off_diagonal_evolution(sim_pure)
+    
 
 if __name__ == "__main__":
     main()
