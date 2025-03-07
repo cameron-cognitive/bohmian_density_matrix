@@ -434,10 +434,6 @@ def main():
     print("\nAnalyzing off-diagonal element evolution...")
     analyzer.analyze_off_diagonal_evolution(sim_pure)
     
-    # Create relaxation animation
-    print("\nCreating relaxation animations...")
-    analyzer.create_relaxation_animation(sim_pure, t_max=5.0, fps=10, epsilon=np.pi/20)
-    
     # Compare different initial distributions
     print("\nComparing different initial distributions...")
     analyzer.compare_initial_distributions(
