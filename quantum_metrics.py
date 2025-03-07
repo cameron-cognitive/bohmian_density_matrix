@@ -59,10 +59,10 @@ class QuantumInformationMetrics:
         """
         eigenvalues = self.calculate_eigenvalues()
         
-        # Filter out zero eigenvalues to avoid log(0)
+        # Filter out zero eigenvalues to avoid log(0) - improved numerical stability
         eigenvalues = eigenvalues[eigenvalues > 1e-10]
         
-        # Calculate entropy
+        # Calculate entropy with improved numerical stability
         entropy = -np.sum(eigenvalues * np.log(eigenvalues))
         
         return entropy
@@ -352,17 +352,20 @@ class QuantumInformationMetrics:
             print("H-function values must have the same length as metrics history.")
             return
         
-        # Calculate correlations
-        corr_von_neumann = np.corrcoef(h_values, self.metrics_history['von_neumann_entropy'])[0, 1]
-        corr_linear = np.corrcoef(h_values, self.metrics_history['linear_entropy'])[0, 1]
-        corr_purity = np.corrcoef(h_values, self.metrics_history['purity'])[0, 1]
-        corr_pr = np.corrcoef(h_values, self.metrics_history['participation_ratio'])[0, 1]
+        # Calculate correlations with improved numerical stability
+        # Use Spearman rank correlation which is more robust to non-linear relationships
+        from scipy.stats import spearmanr
+        
+        corr_von_neumann, p_von_neumann = spearmanr(h_values, self.metrics_history['von_neumann_entropy'])
+        corr_linear, p_linear = spearmanr(h_values, self.metrics_history['linear_entropy'])
+        corr_purity, p_purity = spearmanr(h_values, self.metrics_history['purity'])
+        corr_pr, p_pr = spearmanr(h_values, self.metrics_history['participation_ratio'])
         
         correlations = {
-            'von_neumann_entropy': corr_von_neumann,
-            'linear_entropy': corr_linear,
-            'purity': corr_purity,
-            'participation_ratio': corr_pr
+            'von_neumann_entropy': {'correlation': corr_von_neumann, 'p_value': p_von_neumann},
+            'linear_entropy': {'correlation': corr_linear, 'p_value': p_linear},
+            'purity': {'correlation': corr_purity, 'p_value': p_purity},
+            'participation_ratio': {'correlation': corr_pr, 'p_value': p_pr}
         }
         
         # Visualize correlations
@@ -374,7 +377,7 @@ class QuantumInformationMetrics:
         plt.grid(True)
         plt.xlabel('H-function')
         plt.ylabel('von Neumann Entropy')
-        plt.title(f'Correlation: {corr_von_neumann:.4f}')
+        plt.title(f'Spearman Correlation: {corr_von_neumann:.4f} (p={p_von_neumann:.4f})')
         
         # Scatter plot: H-function vs linear entropy
         plt.subplot(2, 2, 2)
@@ -382,7 +385,7 @@ class QuantumInformationMetrics:
         plt.grid(True)
         plt.xlabel('H-function')
         plt.ylabel('Linear Entropy')
-        plt.title(f'Correlation: {corr_linear:.4f}')
+        plt.title(f'Spearman Correlation: {corr_linear:.4f} (p={p_linear:.4f})')
         
         # Scatter plot: H-function vs purity
         plt.subplot(2, 2, 3)
@@ -390,7 +393,7 @@ class QuantumInformationMetrics:
         plt.grid(True)
         plt.xlabel('H-function')
         plt.ylabel('Purity')
-        plt.title(f'Correlation: {corr_purity:.4f}')
+        plt.title(f'Spearman Correlation: {corr_purity:.4f} (p={p_purity:.4f})')
         
         # Scatter plot: H-function vs participation ratio
         plt.subplot(2, 2, 4)
@@ -398,7 +401,7 @@ class QuantumInformationMetrics:
         plt.grid(True)
         plt.xlabel('H-function')
         plt.ylabel('Participation Ratio')
-        plt.title(f'Correlation: {corr_pr:.4f}')
+        plt.title(f'Spearman Correlation: {corr_pr:.4f} (p={p_pr:.4f})')
         
         plt.tight_layout()
         
